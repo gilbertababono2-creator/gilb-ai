@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./outputs:/app/outputs
+      - ./temp_videos:/app/temp_videos
+      - ~/.cache/modelscope:/root/.cache/modelscope
+    environment:
+      - DEBUG=True
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+    restart: always
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "7860:7860"
+    depends_on:
+      - backend
+    volumes:
+      - ./outputs:/app/outputs
+    environment:
+      - GRADIO_SERVER_NAME=0.0.0.0
+    restart: always
+
+volumes:
+  outputs:
+  temp_videos:
